@@ -1,18 +1,10 @@
 #!/usr/bin/env node
 
-const program = require('commander');
+import program from 'commander';
 
 program
-  .version('1.0.0')
+  .version('1.0.2')
   .description('Compares two configuration files and shows a difference.')
-  .option('-h, --help', 'output usage information')
-  .option('-V, --version', 'output the version number')
   .option('-f, --format [type]', 'output format')
-
-program.on('--help', function(){
-  console.log('')
-})
-  
-program.parse(process.argv);
-
-program.help();
+  .arguments('<firstConfig> <secondConfig>')
+  .parse(process.argv);
