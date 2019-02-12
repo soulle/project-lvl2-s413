@@ -3,3 +3,5 @@
 [![Build Status](https://travis-ci.org/soulle/project-lvl2-s413.svg?branch=master)](https://travis-ci.org/soulle/project-lvl2-s413)
 ## gendiff -h
 [![asciicast](https://asciinema.org/a/nXlk4cNqvBjyIfXgmCodfRjOl.svg)](https://asciinema.org/a/nXlk4cNqvBjyIfXgmCodfRjOl)
+## gendiff before.json after.json
+[![asciicast](https://asciinema.org/a/ZbCDSQi6Wzt80BUkENDcUTECC.svg)](https://asciinema.org/a/ZbCDSQi6Wzt80BUkENDcUTECC)
