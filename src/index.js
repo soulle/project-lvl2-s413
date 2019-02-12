@@ -24,6 +24,7 @@ export default (pathToBefore, pathToAfter) => {
     }
     return acc;
   };
-  const result = keys.reduce(reducer, '{');
-  return `${result}\n}`;
+  const result = `${keys.reduce(reducer, '{')}\n}`;
+  console.log(result);
+  return result;
 };
