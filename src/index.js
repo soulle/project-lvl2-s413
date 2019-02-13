@@ -3,11 +3,12 @@ import fs from 'fs';
 import _ from 'lodash';
 
 const toObject = pathToFile => JSON.parse(fs.readFileSync(pathToFile, 'utf-8'));
+const uniteObjects = (obj1, obj2) => ({ ...obj1, ...obj2 });
 
 export default (pathToBefore, pathToAfter) => {
   const objBefore = toObject(pathToBefore);
   const objAfter = toObject(pathToAfter);
-  const unionObj = { ...objBefore, ...objAfter };
+  const unionObj = uniteObjects(objBefore, objAfter);
   const keys = Object.keys(unionObj);
   const reducer = (acc, key) => {
     if (!_.has(objBefore, key) && _.has(objAfter, key)) {
@@ -25,6 +26,5 @@ export default (pathToBefore, pathToAfter) => {
     return acc;
   };
   const result = `${keys.reduce(reducer, '{')}\n}`;
-  console.log(result);
   return result;
 };
