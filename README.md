@@ -5,3 +5,5 @@
 [![asciicast](https://asciinema.org/a/nXlk4cNqvBjyIfXgmCodfRjOl.svg)](https://asciinema.org/a/nXlk4cNqvBjyIfXgmCodfRjOl)
 ## gendiff before.json after.json
 [![asciicast](https://asciinema.org/a/ZbCDSQi6Wzt80BUkENDcUTECC.svg)](https://asciinema.org/a/ZbCDSQi6Wzt80BUkENDcUTECC)
+## gendiff before.yml after.yml
+[![asciicast](https://asciinema.org/a/O8Y4tkGLfEHvwwqI4lsybAkqF.svg)](https://asciinema.org/a/O8Y4tkGLfEHvwwqI4lsybAkqF)
