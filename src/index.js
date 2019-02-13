@@ -3,28 +3,26 @@ import fs from 'fs';
 import _ from 'lodash';
 
 const toObject = pathToFile => JSON.parse(fs.readFileSync(pathToFile, 'utf-8'));
-const uniteObjects = (obj1, obj2) => ({ ...obj1, ...obj2 });
 
 export default (pathToBefore, pathToAfter) => {
   const objBefore = toObject(pathToBefore);
   const objAfter = toObject(pathToAfter);
-  const unionObj = uniteObjects(objBefore, objAfter);
-  const keys = Object.keys(unionObj);
-  const reducer = (acc, key) => {
-    if (!_.has(objBefore, key) && _.has(objAfter, key)) {
-      return `${acc}\n  + ${key}: ${unionObj[key]}`;
-    }
-    if (_.has(objBefore, key) && !_.has(objAfter, key)) {
-      return `${acc}\n  - ${key}: ${objBefore[key]}`;
-    }
+  const keys = _.union(_.keys(objBefore), _.keys(objAfter));
+  const func = (key) => {
     if (_.has(objBefore, key) && _.has(objAfter, key)) {
       if (objBefore[key] === objAfter[key]) {
-        return `${acc}\n    ${key}: ${unionObj[key]}`;
+        return [`    ${key}: ${objAfter[key]}`];
       }
-      return `${acc}\n  + ${key}: ${objAfter[key]}\n  - ${key}: ${objBefore[key]}`;
+      return [`  + ${key}: ${objAfter[key]}\n  - ${key}: ${objBefore[key]}`];
     }
-    return acc;
+    if (!_.has(objBefore, key) && _.has(objAfter, key)) {
+      return [`  + ${key}: ${objAfter[key]}`];
+    }
+    if (_.has(objBefore, key) && !_.has(objAfter, key)) {
+      return [`  - ${key}: ${objBefore[key]}`];
+    }
+    return [`${key} is undefined`];
   };
-  const result = `${keys.reduce(reducer, '{')}\n}`;
+  const result = ['{', ...keys.map(func), '}'].join('\n');
   return result;
 };

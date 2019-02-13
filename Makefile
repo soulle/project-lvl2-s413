@@ -7,6 +7,9 @@ start:
 test:
 	npm test
 
+watch:
+	npm test -- --watch
+
 publish:
 	npm publish
 
