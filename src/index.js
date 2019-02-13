@@ -13,14 +13,14 @@ export default (pathToBefore, pathToAfter) => {
   const func = (key) => {
     if (_.has(objBefore, key) && _.has(objAfter, key)) {
       if (objBefore[key] === objAfter[key]) {
-        return [`    ${key}: ${objAfter[key]}`];
+        return `    ${key}: ${objAfter[key]}`;
       }
-      return [`  + ${key}: ${objAfter[key]}\n  - ${key}: ${objBefore[key]}`];
+      return `  + ${key}: ${objAfter[key]}\n  - ${key}: ${objBefore[key]}`;
     }
     if (!_.has(objBefore, key) && _.has(objAfter, key)) {
-      return [`  + ${key}: ${objAfter[key]}`];
+      return `  + ${key}: ${objAfter[key]}`;
     }
-    return [`  - ${key}: ${objBefore[key]}`];
+    return `  - ${key}: ${objBefore[key]}`;
   };
   const result = ['{', ...keys.map(func), '}'].join('\n');
   return result;
