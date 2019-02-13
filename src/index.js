@@ -20,10 +20,7 @@ export default (pathToBefore, pathToAfter) => {
     if (!_.has(objBefore, key) && _.has(objAfter, key)) {
       return [`  + ${key}: ${objAfter[key]}`];
     }
-    if (_.has(objBefore, key) && !_.has(objAfter, key)) {
-      return [`  - ${key}: ${objBefore[key]}`];
-    }
-    return [`${key} is undefined`];
+    return [`  - ${key}: ${objBefore[key]}`];
   };
   const result = ['{', ...keys.map(func), '}'].join('\n');
   return result;
