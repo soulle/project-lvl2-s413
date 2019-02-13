@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import fs from 'fs';
+import path from 'path';
 import _ from 'lodash';
+import parse from './parsers';
 
-const toObject = pathToFile => JSON.parse(fs.readFileSync(pathToFile, 'utf-8'));
+const toObject = pathToFile => parse(fs.readFileSync(pathToFile, 'utf-8'), path.extname(pathToFile));
 
 export default (pathToBefore, pathToAfter) => {
   const objBefore = toObject(pathToBefore);

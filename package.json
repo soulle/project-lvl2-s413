@@ -1,6 +1,6 @@
 {
   "name": "soulle_gendiff",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "description": "gendiff project for Hexlet",
   "keywords": [
     "hexlet",
@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "commander": "^2.19.0",
+    "js-yaml": "^3.12.1",
     "lodash": "^4.17.11"
   }
 }
