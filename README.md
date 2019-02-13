@@ -7,3 +7,5 @@
 [![asciicast](https://asciinema.org/a/ZbCDSQi6Wzt80BUkENDcUTECC.svg)](https://asciinema.org/a/ZbCDSQi6Wzt80BUkENDcUTECC)
 ## gendiff before.yml after.yml
 [![asciicast](https://asciinema.org/a/O8Y4tkGLfEHvwwqI4lsybAkqF.svg)](https://asciinema.org/a/O8Y4tkGLfEHvwwqI4lsybAkqF)
+## gendiff before.ini after.ini
+[![asciicast](https://asciinema.org/a/ff6WziZ9iSP00LwAnHHFjLQSn.svg)](https://asciinema.org/a/ff6WziZ9iSP00LwAnHHFjLQSn)
