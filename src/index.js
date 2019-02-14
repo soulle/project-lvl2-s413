@@ -6,11 +6,11 @@ import parse from './parsers';
 
 const toObject = pathToFile => parse(fs.readFileSync(pathToFile, 'utf-8'), path.extname(pathToFile));
 const isObj = value => value instanceof Object;
-const stringify = (data) => {
-  const result = Object.keys(data).map(key => `${key}: ${data[key]}`);
-  return ['{', ...result, '  }'].join('\n');
+const stringify = (data, d) => {
+  const result = Object.keys(data).map(key => `        ${'    '.repeat(d)}${key}: ${data[key]}`);
+  return ['{', ...result, `    ${'    '.repeat(d)}}`].join('\n');
 };
-const toString = data => (data instanceof Object ? stringify(data) : data);
+const toString = (data, d) => (data instanceof Object ? stringify(data, d) : data);
 
 const build = (before, after) => {
   const keys = _.union(_.keys(before), _.keys(after));
@@ -41,24 +41,28 @@ const buildAst = (pathToBefore, pathToAfter) => {
 };
 
 const states = {
-  unchanged: obj => `    ${obj.key}: ${toString(obj.value)}`,
-  changed: obj => [`  + ${obj.key}: ${toString(obj.value[1])}`,
-    `  - ${obj.key}: ${toString(obj.value[0])}`],
-  deleted: obj => `  - ${obj.key}: ${toString(obj.value)}`,
-  added: obj => `  + ${obj.key}: ${toString(obj.value)}`,
+  unchanged: (obj, d) => `    ${'    '.repeat(d)}${obj.key}: ${toString(obj.value, d)}`,
+  changed: (obj, d) => [`  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value[1], d)}`,
+    `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value[0], d)}`],
+  deleted: (obj, d) => `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value, d)}`,
+  added: (obj, d) => `  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value, d)}`,
 };
 
 const render = (ast) => {
-  console.log('AST', ast);
-
-  // const iter = (depth = 0) {
-  //  }
-  const result = ast.map((obj) => {
-    if (obj.type !== 'tree') {
-      return states[obj.state](obj);
+  const iter = (arr, depth, acc) => {
+    if (arr.length === 0) {
+      return acc;
     }
-    return [`  ${obj.key}: ${render(obj.children)}`];
-  });
+    const [current, ...rest] = arr;
+    if (current.children !== undefined) {
+      const children = _.flatten(iter(current.children, depth + 1, []));
+      const newAcc = [...acc, `    ${'    '.repeat(depth)}${current.key}: ${['{', ...children, `    ${'    '.repeat(depth)}}`].join('\n')}`];
+      return iter(rest, depth, newAcc);
+    }
+    const newAcc = [...acc, states[current.state](current, depth)];
+    return iter(rest, depth, newAcc);
+  };
+  const result = iter(ast, 0, []);
   const flatten = _.flatten(result);
   return ['{', ...flatten, '}'].join('\n');
 };
