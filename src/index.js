@@ -6,22 +6,63 @@ import parse from './parsers';
 
 const toObject = pathToFile => parse(fs.readFileSync(pathToFile, 'utf-8'), path.extname(pathToFile));
 
-export default (pathToBefore, pathToAfter) => {
+const isObj = value => value instanceof Object;
+
+const stringify = (data) => {
+  if (data instanceof Object) {
+    const result = Object.keys(data).map(key => `${key}: ${data[key]}`);
+    return ['{', ...result, '  }'].join('\n');
+  }
+  return data;
+};
+
+
+const build = (before, after) => {
+  const keys = _.union(_.keys(before), _.keys(after));
+  // console.log('keys', keys);
+  return keys.map((key) => {
+    const valueBefore = before[key];
+    const valueAfter = after[key];
+    if (_.has(before, key) && _.has(after, key)) {
+      if (!isObj(valueBefore) || !isObj(valueAfter)) {
+        if (valueBefore === valueAfter) {
+          return { key, value: valueAfter, state: 'unchanged' };
+        }
+        return { key, value: [valueBefore, valueAfter], state: 'changed' };
+      }
+      const children = build(valueBefore, valueAfter);
+      return { key, children, type: 'tree' };
+    }
+    if (_.has(before, key) && !_.has(after, key)) {
+      return { key, value: valueBefore, state: 'deleted' };
+    }
+    return { key, value: valueAfter, state: 'added' };
+  });
+};
+
+const buildAst = (pathToBefore, pathToAfter) => {
   const objBefore = toObject(pathToBefore);
   const objAfter = toObject(pathToAfter);
-  const keys = _.union(_.keys(objBefore), _.keys(objAfter));
-  const func = (key) => {
-    if (_.has(objBefore, key) && _.has(objAfter, key)) {
-      if (objBefore[key] === objAfter[key]) {
-        return `    ${key}: ${objAfter[key]}`;
-      }
-      return `  + ${key}: ${objAfter[key]}\n  - ${key}: ${objBefore[key]}`;
-    }
-    if (!_.has(objBefore, key) && _.has(objAfter, key)) {
-      return `  + ${key}: ${objAfter[key]}`;
-    }
-    return `  - ${key}: ${objBefore[key]}`;
-  };
-  const result = ['{', ...keys.map(func), '}'].join('\n');
-  return result;
+  return build(objBefore, objAfter);
 };
+
+const states = {
+  unchanged: obj => `    ${obj.key}: ${stringify(obj.value)}`,
+  changed: obj => [`  + ${obj.key}: ${stringify(obj.value[1])}`,
+    `  - ${obj.key}: ${stringify(obj.value[0])}`],
+  deleted: obj => `  - ${obj.key}: ${stringify(obj.value)}`,
+  added: obj => `  + ${obj.key}: ${stringify(obj.value)}`,
+};
+
+const render = (ast) => {
+  const result = ast.map((obj) => {
+    if (obj.type !== 'tree') {
+      return states[obj.state](obj);
+    }
+    return [`  ${obj.key}: ${render(obj.children)}`];
+  });
+  const flatten = _.flatten(result);
+  return ['{', ...flatten, '}'].join('\n');
+};
+
+export { buildAst, render };

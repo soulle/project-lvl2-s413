@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import genDiff from '..';
+import { buildAst, render } from '..';
 import program from 'commander';
 
 export default program
@@ -7,5 +7,5 @@ export default program
   .description('Compares two configuration files and shows a difference.')
   .option('-f, --format [type]', 'output format')
   .arguments('<firstConfig> <secondConfig>')
-  .action((firstConfig, secondConfig) => console.log(genDiff(firstConfig, secondConfig)))
+  .action((firstConfig, secondConfig) => console.log(render(buildAst(firstConfig, secondConfig))))
   .parse(process.argv);
