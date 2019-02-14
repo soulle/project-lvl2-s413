@@ -5,21 +5,15 @@ import _ from 'lodash';
 import parse from './parsers';
 
 const toObject = pathToFile => parse(fs.readFileSync(pathToFile, 'utf-8'), path.extname(pathToFile));
-
 const isObj = value => value instanceof Object;
-
 const stringify = (data) => {
-  if (data instanceof Object) {
-    const result = Object.keys(data).map(key => `${key}: ${data[key]}`);
-    return ['{', ...result, '  }'].join('\n');
-  }
-  return data;
+  const result = Object.keys(data).map(key => `${key}: ${data[key]}`);
+  return ['{', ...result, '  }'].join('\n');
 };
-
+const toString = data => (data instanceof Object ? stringify(data) : data);
 
 const build = (before, after) => {
   const keys = _.union(_.keys(before), _.keys(after));
-  // console.log('keys', keys);
   return keys.map((key) => {
     const valueBefore = before[key];
     const valueAfter = after[key];
@@ -47,14 +41,18 @@ const buildAst = (pathToBefore, pathToAfter) => {
 };
 
 const states = {
-  unchanged: obj => `    ${obj.key}: ${stringify(obj.value)}`,
-  changed: obj => [`  + ${obj.key}: ${stringify(obj.value[1])}`,
-    `  - ${obj.key}: ${stringify(obj.value[0])}`],
-  deleted: obj => `  - ${obj.key}: ${stringify(obj.value)}`,
-  added: obj => `  + ${obj.key}: ${stringify(obj.value)}`,
+  unchanged: obj => `    ${obj.key}: ${toString(obj.value)}`,
+  changed: obj => [`  + ${obj.key}: ${toString(obj.value[1])}`,
+    `  - ${obj.key}: ${toString(obj.value[0])}`],
+  deleted: obj => `  - ${obj.key}: ${toString(obj.value)}`,
+  added: obj => `  + ${obj.key}: ${toString(obj.value)}`,
 };
 
 const render = (ast) => {
+  console.log('AST', ast);
+
+  // const iter = (depth = 0) {
+  //  }
   const result = ast.map((obj) => {
     if (obj.type !== 'tree') {
       return states[obj.state](obj);
@@ -65,4 +63,4 @@ const render = (ast) => {
   return ['{', ...flatten, '}'].join('\n');
 };
 
-export { buildAst, render };
+export default (pathToBefore, pathToAfter) => render(buildAst(pathToBefore, pathToAfter));
