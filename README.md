@@ -9,5 +9,7 @@
 [![asciicast](https://asciinema.org/a/O8Y4tkGLfEHvwwqI4lsybAkqF.svg)](https://asciinema.org/a/O8Y4tkGLfEHvwwqI4lsybAkqF)
 ## gendiff before.ini after.ini (flat files)
 [![asciicast](https://asciinema.org/a/ff6WziZ9iSP00LwAnHHFjLQSn.svg)](https://asciinema.org/a/ff6WziZ9iSP00LwAnHHFjLQSn)
-## gendiff before.json after.json (recursion files) dont know what to do with spaces :(
-[![asciicast](https://asciinema.org/a/MX4RnHCX5ZDOgdhCLtwwQ3atE.svg)](https://asciinema.org/a/MX4RnHCX5ZDOgdhCLtwwQ3atE)
+## gendiff before.json after.json (recursion files)
+[![asciicast](https://asciinema.org/a/sLGgNNAhLfNnxCXlJDokPCLwu.svg)](https://asciinema.org/a/sLGgNNAhLfNnxCXlJDokPCLwu)
+## gendiff before.ini after.ini / gendiff before.ini after.ini (recursion files)
+[![asciicast](https://asciinema.org/a/x0xMTtrkPiIpKR4OjlGO1xZEg.svg)](https://asciinema.org/a/x0xMTtrkPiIpKR4OjlGO1xZEg)
