@@ -7,5 +7,8 @@ export default program
   .description('Compares two configuration files and shows a difference.')
   .option('-f, --format [type]', 'output format')
   .arguments('<firstConfig> <secondConfig>')
-  .action((firstConfig, secondConfig) => console.log(genDiff(firstConfig, secondConfig)))
+  .action((firstConfig, secondConfig, options) => {
+    const format = options.format || 'tree';
+    console.log(genDiff(format, firstConfig, secondConfig));
+  })
   .parse(process.argv);
