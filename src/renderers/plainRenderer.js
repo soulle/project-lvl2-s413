@@ -2,24 +2,24 @@ const makeValue = (value) => {
   if (typeof value === 'string') {
     return `'${value}'`;
   }
-  return (value instanceof Object ? '[complex value]'.toString() : value);
+  return (value instanceof Object ? '[complex value]' : value);
 };
 
 const types = {
-  updated: obj => `Property '${obj.key}' was updated. From ${makeValue(obj.value.before)} to ${makeValue(obj.value.after)}`,
+  updated: obj => `Property '${obj.key}' was updated. From ${makeValue(obj.valueBefore)} to ${makeValue(obj.valueAfter)}`,
   removed: obj => `Property '${obj.key}' was removed`,
   added: obj => `Property '${obj.key}' was added with value: ${makeValue(obj.value)}`,
-  unchanged: obj => `${obj} wasnt changed`,
+  unchanged: () => null,
   tree: (obj, func) => {
-    const newName = obj.key;
-    const newchildren = obj.value.map(el => ({ ...el, key: `${newName}.${el.key}` }));
-    return func(newchildren);
+    const parent = obj.key;
+    const newChildren = obj.children.map(el => ({ ...el, key: `${parent}.${el.key}` }));
+    return func(newChildren);
   },
 };
 
 const render = (ast) => {
   const result = ast.map(obj => types[obj.type](obj, render));
-  return result.filter(el => !el.includes('wasnt changed')).join('\n');
+  return result.filter(v => v).join('\n');
 };
 
 export default render;

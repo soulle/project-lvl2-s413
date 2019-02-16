@@ -2,10 +2,11 @@ import plainRenderer from './plainRenderer';
 import treeRenderer from './treeRenderer';
 import jsonRenderer from './jsonRenderer';
 
-const formats = {
+const rendering = {
   tree: treeRenderer,
   plain: plainRenderer,
   json: jsonRenderer,
 };
 
-export default formats;
+const render = (ast, type) => rendering[type](ast);
+export default render;

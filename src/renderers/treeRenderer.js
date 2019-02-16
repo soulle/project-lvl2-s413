@@ -11,46 +11,21 @@ const plus = '+ ';
 const template = (obj, value, d, sign) => `  ${'    '.repeat(d)}${sign}${obj.key}: ${toString(value, d)}`;
 
 
-const nodeTypes = [
-  {
-    type: 'unchanged',
-    toStr: (obj, d) => `  ${template(obj, obj.value, d, '')}`,
+const nodeTypes = {
+  unchanged: (obj, d) => `  ${template(obj, obj.value, d, '')}`,
+  updated: (obj, d) => [`${template(obj, obj.valueAfter, d, plus)}`,
+    `${template(obj, obj.valueBefore, d, minus)}`],
+  removed: (obj, d) => template(obj, obj.value, d, minus),
+  added: (obj, d) => template(obj, obj.value, d, plus),
+  tree: (obj, d, render) => {
+    const children = render(obj.children, d + 1);
+    return `    ${'    '.repeat(d)}${obj.key}: ${children}`;
   },
-  {
-    type: 'updated',
-    toStr: (obj, d) => [`${template(obj, obj.value.after, d, plus)}`,
-      `${template(obj, obj.value.before, d, minus)}`],
-  },
-  {
-    type: 'removed',
-    toStr: (obj, d) => template(obj, obj.value, d, minus),
-  },
-  {
-    type: 'added',
-    toStr: (obj, d) => template(obj, obj.value, d, plus),
-  },
-  {
-    type: 'tree',
-    toStr: (obj, d, iter) => {
-      const children = _.flatten(iter(obj.value, d + 1, []));
-      return `    ${'    '.repeat(d)}${obj.key}: ${['{', ...children, `    ${'    '.repeat(d)}}`].join('\n')}`;
-    },
-  },
-];
+};
 
-const render = (ast) => {
-  const iter = (arr, depth, acc) => {
-    if (arr.length === 0) {
-      return acc;
-    }
-    const [current, ...rest] = arr;
-    const makeStr = _.find(nodeTypes, { type: current.type }).toStr;
-    const newAcc = [...acc, makeStr(current, depth, iter)];
-    return iter(rest, depth, newAcc);
-  };
-  const result = iter(ast, 0, []);
-  const flatten = _.flatten(result);
-  return ['{', ...flatten, '}'].join('\n');
+const render = (ast, depth = 0) => {
+  const result = _.flattenDeep(ast.map(el => nodeTypes[el.type](el, depth, render)));
+  return ['{', ...result, `${'    '.repeat(depth)}}`].join('\n');
 };
 
 export default render;
