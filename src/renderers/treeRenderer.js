@@ -1,28 +1,33 @@
 import _ from 'lodash';
 
-const stringify = (data, d) => {
-  const result = Object.keys(data).map(key => `        ${'    '.repeat(d)}${key}: ${data[key]}`);
+const stringify = (value, d) => {
+  const result = Object.keys(value).map(key => `        ${'    '.repeat(d)}${key}: ${value[key]}`);
   return ['{', ...result, `    ${'    '.repeat(d)}}`].join('\n');
 };
-const toString = (data, d) => (data instanceof Object ? stringify(data, d) : data);
+const toString = (value, d) => (value instanceof Object ? stringify(value, d) : value);
 
-const types = [
+const minus = '- ';
+const plus = '+ ';
+const template = (obj, value, d, sign) => `  ${'    '.repeat(d)}${sign}${obj.key}: ${toString(value, d)}`;
+
+
+const nodeTypes = [
   {
     type: 'unchanged',
-    toStr: (obj, d) => `    ${'    '.repeat(d)}${obj.key}: ${toString(obj.value, d)}`,
+    toStr: (obj, d) => `  ${template(obj, obj.value, d, '')}`,
   },
   {
     type: 'updated',
-    toStr: (obj, d) => [`  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value.after, d)}`,
-      `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value.before, d)}`],
+    toStr: (obj, d) => [`${template(obj, obj.value.after, d, plus)}`,
+      `${template(obj, obj.value.before, d, minus)}`],
   },
   {
     type: 'removed',
-    toStr: (obj, d) => `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value, d)}`,
+    toStr: (obj, d) => template(obj, obj.value, d, minus),
   },
   {
     type: 'added',
-    toStr: (obj, d) => `  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value, d)}`,
+    toStr: (obj, d) => template(obj, obj.value, d, plus),
   },
   {
     type: 'tree',
@@ -39,7 +44,7 @@ const render = (ast) => {
       return acc;
     }
     const [current, ...rest] = arr;
-    const makeStr = _.find(types, { type: current.type }).toStr;
+    const makeStr = _.find(nodeTypes, { type: current.type }).toStr;
     const newAcc = [...acc, makeStr(current, depth, iter)];
     return iter(rest, depth, newAcc);
   };

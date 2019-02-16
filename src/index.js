@@ -7,7 +7,7 @@ import formats from './renderers';
 
 const toObject = pathToFile => parse(fs.readFileSync(pathToFile, 'utf-8'), path.extname(pathToFile));
 
-const types = [
+const nodeTypes = [
   {
     type: 'tree',
     check: (before, after, key) => (_.has(before, key) && _.has(after, key))
@@ -23,9 +23,7 @@ const types = [
   },
   {
     type: 'updated',
-    check: (before, after, key) => (_.has(before, key) && _.has(after, key))
-    && (!_.isObject(before[key]) || !_.isObject(after[key]))
-    && (before[key] !== after[key]),
+    check: (before, after, key) => _.has(before, key) && _.has(after, key),
     getValue: (before, after, key) => ({ before: before[key], after: after[key] }),
   },
   {
@@ -43,9 +41,8 @@ const types = [
 const build = (before, after) => {
   const keys = _.union(_.keys(before), _.keys(after));
   return keys.map((key) => {
-    const { type, getValue } = types.find(({ check }) => check(before, after, key));
+    const { type, getValue } = nodeTypes.find(({ check }) => check(before, after, key));
     const newKey = { key, value: getValue(before, after, key, build), type };
-    // console.log('NEWKEY___', newKey.value);
     return newKey;
   });
 };
