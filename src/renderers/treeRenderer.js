@@ -6,13 +6,32 @@ const stringify = (data, d) => {
 };
 const toString = (data, d) => (data instanceof Object ? stringify(data, d) : data);
 
-const types = {
-  unchanged: (obj, d) => `    ${'    '.repeat(d)}${obj.key}: ${toString(obj.value, d)}`,
-  updated: (obj, d) => [`  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value[1], d)}`,
-    `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value[0], d)}`],
-  removed: (obj, d) => `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value, d)}`,
-  added: (obj, d) => `  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value, d)}`,
-};
+const types = [
+  {
+    type: 'unchanged',
+    toStr: (obj, d) => `    ${'    '.repeat(d)}${obj.key}: ${toString(obj.value, d)}`,
+  },
+  {
+    type: 'updated',
+    toStr: (obj, d) => [`  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value.after, d)}`,
+      `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value.before, d)}`],
+  },
+  {
+    type: 'removed',
+    toStr: (obj, d) => `  ${'    '.repeat(d)}- ${obj.key}: ${toString(obj.value, d)}`,
+  },
+  {
+    type: 'added',
+    toStr: (obj, d) => `  ${'    '.repeat(d)}+ ${obj.key}: ${toString(obj.value, d)}`,
+  },
+  {
+    type: 'tree',
+    toStr: (obj, d, iter) => {
+      const children = _.flatten(iter(obj.value, d + 1, []));
+      return `    ${'    '.repeat(d)}${obj.key}: ${['{', ...children, `    ${'    '.repeat(d)}}`].join('\n')}`;
+    },
+  },
+];
 
 const render = (ast) => {
   const iter = (arr, depth, acc) => {
@@ -20,12 +39,8 @@ const render = (ast) => {
       return acc;
     }
     const [current, ...rest] = arr;
-    if (current.type === 'tree') {
-      const children = _.flatten(iter(current.children, depth + 1, []));
-      const newAcc = [...acc, `    ${'    '.repeat(depth)}${current.key}: ${['{', ...children, `    ${'    '.repeat(depth)}}`].join('\n')}`];
-      return iter(rest, depth, newAcc);
-    }
-    const newAcc = [...acc, types[current.type](current, depth)];
+    const makeStr = _.find(types, { type: current.type }).toStr;
+    const newAcc = [...acc, makeStr(current, depth, iter)];
     return iter(rest, depth, newAcc);
   };
   const result = iter(ast, 0, []);

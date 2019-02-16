@@ -4,25 +4,21 @@ const makeValue = (value) => {
   }
   return (value instanceof Object ? '[complex value]'.toString() : value);
 };
-
+// const valueAdded = _.isObject(value) ? ' complex value' : value: ${ value }; `
 const types = {
-  updated: obj => `Property '${obj.key}' was updated. From ${makeValue(obj.value[0])} to ${makeValue(obj.value[1])}`,
+  updated: obj => `Property '${obj.key}' was updated. From ${makeValue(obj.value.before)} to ${makeValue(obj.value.after)}`,
   removed: obj => `Property '${obj.key}' was removed`,
   added: obj => `Property '${obj.key}' was added with value: ${makeValue(obj.value)}`,
+  unchanged: obj => null,
+  tree: (obj, func) => {
+    const newName = obj.key;
+    const newchildren = obj.value.map(el => ({ ...el, key: `${newName}.${el.key}` }));
+    return func(newchildren);
+  },
 };
 
 const render = (ast) => {
-  const result = ast.map((obj) => {
-    if (obj.type === 'unchanged') {
-      return null;
-    }
-    if (obj.type === 'tree') {
-      const newName = obj.key;
-      const newchildren = obj.children.map(el => ({ ...el, key: `${newName}.${el.key}` }));
-      return render(newchildren);
-    }
-    return types[obj.type](obj);
-  });
+  const result = ast.map(obj => types[obj.type](obj, render));
   return result.filter(v => v).join('\n');
 };
 

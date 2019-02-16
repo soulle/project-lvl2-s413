@@ -6,7 +6,6 @@ const parsing = {
   '.yml': yaml.safeLoad,
   '.ini': ini.parse,
 };
-
 const parse = (data, ext) => parsing[ext](data);
 
 export default parse;
