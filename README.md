@@ -15,3 +15,5 @@
 [![asciicast](https://asciinema.org/a/x0xMTtrkPiIpKR4OjlGO1xZEg.svg)](https://asciinema.org/a/x0xMTtrkPiIpKR4OjlGO1xZEg)
 ## gendiff --format plain before/.yml/.ini/.json after/.yml/.ini/.json (recursion files)
 [![asciicast](https://asciinema.org/a/QuR13Ihr9ExzsGtOvrBQGm3RK.svg)](https://asciinema.org/a/QuR13Ihr9ExzsGtOvrBQGm3RK)
+## gendiff -format json before.json after.json (recursion files)
+[![asciicast](https://asciinema.org/a/346qEPxpL07qY8rkIakUruakt.svg)](https://asciinema.org/a/346qEPxpL07qY8rkIakUruakt)
