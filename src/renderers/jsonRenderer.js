@@ -1,3 +1,3 @@
-const render = ast => ast.map(node => JSON.stringify(node));
+const render = ast => JSON.stringify(ast);
 
 export default render;

@@ -9,6 +9,6 @@ export default program
   .arguments('<firstConfig> <secondConfig>')
   .action((firstConfig, secondConfig, options) => {
     const format = options.format || 'tree';
-    console.log(genDiff(format, firstConfig, secondConfig));
+    console.log(genDiff(firstConfig, secondConfig, format));
   })
   .parse(process.argv);

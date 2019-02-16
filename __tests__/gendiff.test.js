@@ -22,3 +22,9 @@ describe('gendiff from tree and plain formats', () => {
     },
   );
 });
+
+test('to json', () => {
+  const actual = genDiff('__tests__/__fixtures__/recursion_files/before.json', '__tests__/__fixtures__/recursion_files/after.json', 'json');
+  const expected = fs.readFileSync('__tests__/__fixtures__/expected_step7.json', 'utf-8');
+  expect(actual).toEqual(expected);
+});
