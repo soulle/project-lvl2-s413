@@ -1,11 +1,10 @@
 import plainRenderer from './plainRenderer';
 import treeRenderer from './treeRenderer';
-import jsonRenderer from './jsonRenderer';
 
 const rendering = {
   tree: treeRenderer,
   plain: plainRenderer,
-  json: jsonRenderer,
+  json: JSON.stringify,
 };
 
 const render = (ast, type) => rendering[type](ast);
